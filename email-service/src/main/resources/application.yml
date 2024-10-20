@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: email-service
+  config:
+    import: optional:configserver:http://localhost:8012
+  rabbitmq:
+    host: localhost
+    port: 5672
+
+server:
+  port: ${PORT:0}
+
+logging:
+  file:
+    name: elasticstack_docker/logstash_ingest_data/email-service.log

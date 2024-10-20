@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: time-tracker-service
+  config:
+    import: optional:configserver:http://localhost:8012
+  rabbitmq:
+    host: localhost
+    port: 5672
+  datasource:
+    url: "jdbc:postgresql://localhost:5433/time_tracker_service"
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        hbm2ddl:
+          auto: validate
+
+server:
+  port: ${PORT:0}
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    service-url:
+      defaultZone: http://localhost:8010/eureka
+
+logging:
+  file:
+    name: elasticstack_docker/logstash_ingest_data/time-tracker-service.log

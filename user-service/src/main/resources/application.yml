@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: user-service
+  config:
+    import: optional:configserver:http://localhost:8012
+  datasource:
+    url: "jdbc:postgresql://localhost:5433/user_service"
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        hbm2ddl:
+          auto: validate
+  rabbitmq:
+    host: localhost
+    port: 5672
+
+server:
+  port: ${PORT:0}
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    service-url:
+      defaultZone: http://localhost:8010/eureka
+
+jwt:
+  expiration: 100000
+
+logging:
+  file:
+    name: elasticstack_docker/logstash_ingest_data/user-service.log

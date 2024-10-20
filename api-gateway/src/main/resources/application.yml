@@ -1,0 +1,167 @@
+spring:
+  application:
+    name: api-gateway
+  config:
+    import: optional:configserver:http://localhost:8012
+    name: config-server
+  rabbitmq:
+    host: localhost
+    port: 5672
+  cloud:
+    gateway:
+#      discovery:
+#        locator:
+#          enabled: true
+#          lower-case-service-id: true
+      routes[0]:
+        id: user-login
+        uri: lb://user-service
+        predicates:
+          - Path=/user-service/auth/*
+          - Method=POST
+        filters:
+          - RemoveRequestHeader=Cookie
+          - RewritePath=/user-service/(?<segment>/?.*), /$\{segment}
+      routes[1]:
+        id: find-all-create-projects
+        uri: lb://task-tracker-service
+        predicates:
+          - Path=/task-tracker-service/api/v1/projects
+          - Method= GET, POST
+          - Header=Authorization, Bearer .*
+        filters:
+          - RemoveRequestHeader=Cookie
+          - RewritePath=/task-tracker-service/(?<segment>/?.*), /$\{segment}
+          - AuthorizationHeaderFilter=ROLE_ADMIN DELETE
+      routes[2]:
+        id: update-delete-project
+        uri: lb://task-tracker-service
+        predicates:
+          - Path=/task-tracker-service/api/v1/projects/*
+          - Method=PATCH, DELETE
+          - Header=Authorization, Bearer .*
+        filters:
+          - RemoveRequestHeader=Cookie
+          - RewritePath=/task-tracker-service/(?<segment>/?.*), /$\{segment}
+          - AuthorizationHeaderFilter
+      routes[3]:
+        id: create-task-state
+        uri: lb://task-tracker-service
+        predicates:
+          - Path=/task-tracker-service/api/v1/task_states
+          - Method=POST
+          - Header=Authorization, Bearer .*
+        filters:
+          - RemoveRequestHeader=Cookie
+          - RewritePath=/task-tracker-service/(?<segment>/?.*), /$\{segment}
+          - AuthorizationHeaderFilter
+      routes[4]:
+        id: find-all-update-delete-task-states
+        uri: lb://task-tracker-service
+        predicates:
+          - Path=/task-tracker-service/api/v1/task_states/*
+          - Method=GET, PATCH, DELETE
+          - Header=Authorization, Bearer .*
+        filters:
+          - RemoveRequestHeader=Cookie
+          - RewritePath=/task-tracker-service/(?<segment>/?.*), /$\{segment}
+          - AuthorizationHeaderFilter
+      routes[5]:
+        id: create-task
+        uri: lb://task-tracker-service
+        predicates:
+          - Path=/task-tracker-service/api/v1/tasks
+          - Method=POST
+          - Header=Authorization, Bearer .*
+        filters:
+          - RemoveRequestHeader=Cookie
+          - RewritePath=/task-tracker-service/(?<segment>/?.*), /$\{segment}
+          - AuthorizationHeaderFilter
+      routes[6]:
+        id: find-all-update-delete-tasks
+        uri: lb://task-tracker-service
+        predicates:
+          - Path=/task-tracker-service/api/v1/tasks/*
+          - Method=GET, PATCH, DELETE
+          - Header=Authorization, Bearer .*
+        filters:
+          - RemoveRequestHeader=Cookie
+          - RewritePath=/task-tracker-service/(?<segment>/?.*), /$\{segment}
+          - AuthorizationHeaderFilter
+      routes[7]:
+        id: time-tracker-api
+        uri: lb://time-tracker-service
+        predicates:
+          - Path=/time-tracker-service/api/v1/task_time/**
+          - Method=GET
+          - Header=Authorization, Bearer .*
+        filters:
+          - RemoveRequestHeader=Cookie
+          - RewritePath=/time-tracker-service/(?<segment>/?.*), /$\{segment}
+#          - AuthorizationHeaderFilter
+      routes[8]:
+        id: notification-api
+        uri: lb://notification-service
+        predicates:
+          - Path=/notification-service/api/v1/task_deadline
+          - Method=POST
+          - Header=Authorization, Bearer .*
+        filters:
+          - RemoveRequestHeader=Cookie
+          - RewritePath=/notification-service/(?<segment>/?.*), /$\{segment}
+          - AuthorizationHeaderFilter
+      routes[9]:
+        id: notification-api
+        uri: lb://notification-service
+        predicates:
+          - Path=/notification-service/api/v1/task_deadline/*
+          - Method=DELETE
+          - Header=Authorization, Bearer .*
+        filters:
+          - RemoveRequestHeader=Cookie
+          - RewritePath=/notification-service/(?<segment>/?.*), /$\{segment}
+          - AuthorizationHeaderFilter
+      routes[10]:
+        id: task-tracker-swagger
+        uri: lb://task-tracker-service
+        predicates:
+          - Path=/task-tracker-service/swagger
+          - Method=PATCH, DELETE
+          - Header=Authorization, Bearer .*
+        filters:
+          - RemoveRequestHeader=Cookie
+          - RewritePath=/task-tracker-service/(?<segment>/?.*), /$\{segment}
+          - AuthorizationHeaderFilter
+      routes[11]:
+        id: user-delete
+        uri: lb://user-service
+        predicates:
+          - Path=/user-service/api/v1/users/*
+          - Method= DELETE
+          - Header=Authorization, Bearer .*
+        filters:
+          - RemoveRequestHeader=Cookie
+          - RewritePath=/user-service/(?<segment>/?.*), /$\{segment}
+
+server:
+  port: ${PORT:8020}
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    service-url:
+      defaultZone: http://localhost:8010/eureka
+
+management:
+  endpoint:
+    gateway:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: gateway, health, mappings
+
+logging:
+  file:
+    name: elasticstack_docker/logstash_ingest_data/api-gateway.log
