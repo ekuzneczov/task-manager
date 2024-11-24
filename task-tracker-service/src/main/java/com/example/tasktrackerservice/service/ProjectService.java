@@ -39,7 +39,7 @@ public class ProjectService {
     @Transactional
     public ProjectReadDto create(ProjectCreateEditDto projectDto) {
         Project project = projectCreateEditMapper.map(projectDto);
-        project.setUpdatedAt(null);
+//        project.setUpdatedAt(null);
         return projectReadMapper.map(
                 projectRepository.save(project)
         );
