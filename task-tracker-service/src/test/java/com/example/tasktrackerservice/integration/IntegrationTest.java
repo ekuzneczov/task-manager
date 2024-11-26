@@ -2,6 +2,7 @@ package com.example.tasktrackerservice.integration;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -15,9 +16,10 @@ import static org.springframework.test.context.TestConstructor.AutowireMode.ALL;
 @TestConstructor(autowireMode = ALL)
 @ActiveProfiles("test")
 @Transactional
-@Sql({
-        "classpath:db/data.sql"
-})
+@Rollback
+//@Sql({
+//        "classpath:db/data.sql"
+//})
 @SpringBootTest
 public abstract class IntegrationTest {
 

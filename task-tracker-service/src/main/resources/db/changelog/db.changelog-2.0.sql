@@ -2,7 +2,8 @@
 
 --changeset kuzneczov:1
 INSERT INTO project (name)
-VALUES ('Test my app');
+VALUES ('Test my app'),
+       ('Deploy another app');
 
 --changeset kuzneczov:2
 INSERT INTO task_state (name, project_id, left_task_state_id, right_task_state_id)

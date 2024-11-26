@@ -16,6 +16,8 @@ spring:
         format_sql: true
         hbm2ddl:
           auto: validate
+  liquibase:
+    contexts: prod
 
 server:
   port: ${PORT:0}
@@ -26,6 +28,7 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8010/eureka
+
 
 logging:
   file:
