@@ -8,6 +8,7 @@ import com.example.tasktrackerservice.service.ProjectService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -52,7 +53,8 @@ public class ProjectRestController {
     @ResponseStatus(NO_CONTENT)
     public void delete(@PathVariable Long id) {
         if (!projectService.delete(id)) {
-            throw new NotFoundException(format("Project with id '%s' not found", id));
+            throw new ResponseStatusException(NOT_FOUND,
+                    String.format("Project with id '%s' not found", id));
         }
     }
 }
