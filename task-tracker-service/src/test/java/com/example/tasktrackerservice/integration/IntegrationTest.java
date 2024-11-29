@@ -15,12 +15,9 @@ import static org.springframework.test.context.TestConstructor.AutowireMode.ALL;
 
 @TestConstructor(autowireMode = ALL)
 @ActiveProfiles("test")
-@Transactional
-@Rollback
 //@Sql({
 //        "classpath:db/data.sql"
 //})
-@SpringBootTest
 public abstract class IntegrationTest {
 
     private static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres");
